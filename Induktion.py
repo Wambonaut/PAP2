@@ -8,7 +8,7 @@ Created on Sun Nov  4 17:24:35 2018
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-from scipy import optimize
+from scipy import optimize, stats
 ####Teil 1: Frequenz/Spannnung, Strom/Spannung Diagramme
 ###Frequenz/Spannung
 ##plot shit
@@ -21,7 +21,7 @@ def FrequencyVoltage():
     plt.xlabel("Frequeny[Hz]")
     plt.title("Diagramm 1: Spannung in Abhängigkeit der Drehfrequenz bei 4,0±0.05A")
     ##do the regression thing
-    (gradient, offset) =np.polyfit(frequency_Hz, frequency_Volt, deg=1)
+    (gradient, offset, r_value, p_value, stderr) =stats.linregress(frequency_Hz, frequency_Volt)
     ##plot the regression
     plt.plot([offset + x*gradient for x in range(17)], color="red")
     plt.text(4, 3, "Steigung: " + str(gradient.round(2)))
@@ -29,7 +29,7 @@ def FrequencyVoltage():
     red_patch = mpatches.Patch(color='red', label='Regression')
     blue_patch = mpatches.Patch(color='blue', label='Gemessen')
     plt.legend(handles=[red_patch, blue_patch])
-    
+    print("Stderr Slope Diag 1:" + str(stderr))
     plt.show()
 ###Strom/Spannung
 def CurrentVoltage():
@@ -41,7 +41,7 @@ def CurrentVoltage():
     plt.title("Diagramm 2: Spannung in Abhängigkeit des Stroms bei f=10±1Hz")
     
     ##linear Regression again
-    (gradient, offset) =np.polyfit(current_Ampere, current_Volt, deg=1)
+    (gradient, offset, r_value, p_value, stderr) =stats.linregress(current_Ampere, current_Volt)
     ##plot the regression
     plt.plot([offset + x*gradient for x in range(6)], color="red")
     plt.text(1, 3, "Steigung: " + str(gradient.round(2)))
@@ -49,7 +49,7 @@ def CurrentVoltage():
     red_patch = mpatches.Patch(color='red', label='Regression')
     blue_patch = mpatches.Patch(color='blue', label='Gemessen')
     plt.legend(handles=[red_patch, blue_patch])
-    
+    print("Stderr Slope Diag 2:" + str(stderr))
     plt.show()
 
 ####Teil 2: Spannung bei Periodischem Strom
@@ -94,9 +94,11 @@ def Induced_currentFrequency():
     plt.errorbar(frequency, Volt_compared, xerr=frequency_err, yerr=Volt_err, color="blue")
     plt.xlabel("Frequenz[Hz]")
     plt.ylabel("Induzierte/Angelegte Spannung [V/V]")
-    plt.title("Verhältnis Induziert/Angelegte Spannung in Abhängigkeit der Frequenz")
+    plt.title("Diagramm 4: Verhältnis Induziert/Angelegte Spannung in Abhängigkeit der Frequenz")
     ###linear fit
-    (gradient, offset)=np.polyfit(frequency, Volt_compared, deg=1)
+    (gradient, offset, r_value, p_value, stderr)=stats.linregress(frequency, Volt_compared)
+    print("Stderr Slope Diag 4:" + str(stderr))
+    plt.text(250,10, "Steigung: "+ str(round(gradient, 2)) + "V/Hz")
     plt.plot(frequency, gradient*frequency+offset, color="red")
     plt.show()
 def ResistanceFrequency():
@@ -116,15 +118,16 @@ def ResistanceFrequency():
     plt.errorbar(frequency, Ohm, xerr=frequency_err, yerr=Ohm_err)
     plt.xlabel("Frequenz[Hz]")
     plt.ylabel("Widerstand[Ω]")
-    plt.title("Widerstand der in Abhängigkeit der Frequenz")
+    plt.title("Diagramm 5: Widerstand der in Abhängigkeit der Frequenz")
     ##linear fit
-    (gradient, offset)=np.polyfit(frequency, Ohm, deg=1)
+    (gradient, offset, r_value, p_value, stderr)=stats.linregress(frequency, Ohm)
     plt.plot(frequency, frequency*gradient+offset, color="red")
-    
+    plt.text(250, 600, "Steigung: " + str(round(gradient, 2)) + "Ω/Hz")
     red_patch = mpatches.Patch(color='red', label='Regression')
     blue_patch = mpatches.Patch(color='blue', label='Gemessen')
     plt.legend(handles=[red_patch, blue_patch])
-    
+    print("Stderr Slope Diag 5:" + str(stderr))
+
     plt.show()
 FrequencyVoltage()
 CurrentVoltage()
