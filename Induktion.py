@@ -54,25 +54,25 @@ def CurrentVoltage():
 
 ####Teil 2: Spannung bei Periodischem Strom
 ###Winkel/Spannung
-def AngleVoltage(sine_fit=True):
+def AngleVoltage(cos_fit=True):
     angle=[x*30 for x in range(7)]
     Volt=[1.5,1.3,0.7,0.2,0.8,1.3,1.5]
     xerr=2
     yerr=0.05
-    plt.errorbar(angle, Volt, xerr=xerr, yerr=yerr, color="blue")
+    plt.errorbar(angle, Volt, xerr=xerr, yerr=yerr, color="blue", fmt=".")
     plt.xlabel("Winkel[°]")
     plt.ylabel("Spannung[V]")
     angle=[x*30 for x in range(13)]
     Volt.extend(Volt[1:])
-    if sine_fit:
+    if cos_fit:
         ##Do a sine fit (because y not)
-        def test_func(x, a, b, c, d):
-            return a * np.sin(b * x + c ) + d
+        def test_func(x, a, b, d):
+            return a * np.cos(b * x) + d
         
         params, params_covariance = optimize.curve_fit(test_func, angle, Volt,
-                                                       p0=[2.0, 0.05, 0, 1])
-        plt.plot(range(190), [test_func(angl, params[0], params[1], params[2], params[3]) for angl in range(190)], color="red")
-        red_patch = mpatches.Patch(color='red', label='Sinus Fit')
+                                                       p0=[5.0, 0.03, 0.8])
+        plt.plot(range(190), [test_func(angl, *params) for angl in range(190)], color="red")
+        red_patch = mpatches.Patch(color='red', label='Cosinus Fit')
     
     blue_patch = mpatches.Patch(color='blue', label='Gemessen')
     plt.legend(handles=[red_patch, blue_patch])
@@ -98,7 +98,7 @@ def Induced_currentFrequency():
     ###linear fit
     (gradient, offset, r_value, p_value, stderr)=stats.linregress(frequency, Volt_compared)
     print("Stderr Slope Diag 4:" + str(stderr))
-    plt.text(250,10, "Steigung: "+ str(round(gradient, 2)) + "V/Hz")
+    plt.text(250,10, "Steigung: "+ str(round(gradient, 3)) + "V/Hz")
     plt.plot(frequency, gradient*frequency+offset, color="red")
     plt.show()
 def ResistanceFrequency():
@@ -122,16 +122,16 @@ def ResistanceFrequency():
     ##linear fit
     (gradient, offset, r_value, p_value, stderr)=stats.linregress(frequency, Ohm)
     plt.plot(frequency, frequency*gradient+offset, color="red")
-    plt.text(250, 600, "Steigung: " + str(round(gradient, 2)) + "Ω/Hz")
+    plt.text(250, 600, "Steigung: " + str(round(gradient, 3)) + "Ω/Hz")
     red_patch = mpatches.Patch(color='red', label='Regression')
     blue_patch = mpatches.Patch(color='blue', label='Gemessen')
     plt.legend(handles=[red_patch, blue_patch])
     print("Stderr Slope Diag 5:" + str(stderr))
 
     plt.show()
-FrequencyVoltage()
-CurrentVoltage()
+#FrequencyVoltage()
+#CurrentVoltage()
 AngleVoltage()
-Induced_currentFrequency()
-ResistanceFrequency()
+#Induced_currentFrequency()
+#ResistanceFrequency()
     
