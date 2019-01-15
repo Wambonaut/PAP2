@@ -25,7 +25,7 @@ def checkdir():
 
 LiC=np.loadtxt("20_11_2018 15_09_42.txt")
 plt.plot(LiC[:,0],LiC[:,1])
-slope, intercept, r, p, stderr=stats.linregress(LiC[10:15])
+(slope, intercept), cov=np.polyfit(LiC[10:15,0], LiC[10:15,1], 1, cov=True)
 plt.errorbar(LiC[10:15,0], LiC[10:15,1], np.sqrt(LiC[10:15,1]))
 plt.plot(np.linspace(4,7,25), np.linspace(4,7,25)*slope+intercept)
 plt.title("Gesamtes Spektrum mit gefittetem linearem Abfall")
@@ -33,7 +33,7 @@ plt.ylabel("Intensität")
 plt.xlabel("Winkel")
 plt.show()
 root=-intercept/slope
-root_ERROR=-intercept/slope**2*stderr
+root_ERROR=root*np.sqrt(cov[0][0]/slope**2+cov[1][1]/intercept**2)
 print("Nullstelle:", root, "+-", root_ERROR)
 ##load single spikes
 first_order=np.loadtxt("20_11_2018 15_15_14.txt")
@@ -90,9 +90,9 @@ plt.xlabel("Spannung[kV]")
 plt.ylabel("Intensität")
 ##linreg this shit
 
-slope, intercept, r, p, stderr=stats.linregress(Voltage[3:], Intensity[3:])
+(slope, intercept), cov=np.polyfit(Voltage[3:], Intensity[3:], 1, cov=True)
 root=-intercept/slope*1000
-root_ERROR=-intercept/slope**2*np.sqrt(stderr)*1000
+root_ERROR=root*np.sqrt(cov[0][0]/slope**2+cov[1][1]/intercept**2)
 plt.plot(Voltage[2:], Voltage[2:]*slope+intercept)
 plt.show()
 print("Nullstelle:", root, "+-", root_ERROR)
