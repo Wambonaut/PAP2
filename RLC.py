@@ -13,7 +13,6 @@ phi=np.array([1.26,1.00,0.073,0.065,0.055,0.048,0.040,0.036,0.033,0.030])/np.pi*
 plt.plot(f, phi)
 plt.xscale("log")
 plt.show()
-print(phi[1], phi[2])
 phi_Grenz=(45-phi[2])/(phi[1]-phi[2])*3000+(phi[1]-45)/(phi[1]-phi[2])*2000
 print("Phi_Grenz: ",phi_Grenz)
 print("Fehler grob abgeschätzt: 200")
@@ -36,9 +35,9 @@ print("Messung 3: Rv+R=", RvR(3050,3550,3300,47e-9),"+-",RvR_ERROR(3050,3550,330
 
 ##Bestimmen von Rv aus verhältnis ein und ausgangsspannung
 Rv=lambda R, Ua, Ue: Ue*R/Ua-R
-print("\n\nNUR FÜR STUDENTEN MIT HAUPTFACH PHYSIK:\nMessung 1:", Rv(1000,0.91,0.96))
-print("Messung 2:", Rv(220,0.71,0.96))
-print("Messung 3:", Rv(47,0.31,0.90))
+print("\n\nNUR FÜR STUDENTEN MIT HAUPTFACH PHYSIK:\nMessung 1: Rv=", Rv(1000,0.91,0.96))
+print("Messung 2: Rv=", Rv(220,0.71,0.96))
+print("Messung 3: Rv=", Rv(47,0.31,0.90))
 
 ##5. Bestimmung der Dämpfungskonstante
 print("\n\n5. Bestimmung der Dämpfungskonstante\nL: Warte das ist doch gar keine Resonanzfrequenz")
@@ -48,5 +47,18 @@ popt, pcov = optimize.curve_fit(fitfun,np.linspace(0,0.00145,5),amps,p0=[5,20])
 plt.plot(np.linspace(0,0.00145,50),fitfun(np.linspace(0,0.00145,50), *popt))
 plt.errorbar(np.linspace(0,0.00145,5),amps, yerr=0.1, fmt="none")
 plt.show()
-print("Dämpfungskonstante:", popt[1],"+-",np.sqrt(pcov[1][1]))
+print("Dämpfungskonstante aus Fit:", popt[1],"+-",np.sqrt(pcov[1][1]))
 print("Daraus R+RV:",popt[1]*2*L(3440, 47e-9),"+-",popt[1]*2*L(3440, 47e-9)*np.sqrt(pcov[1][1]/popt[1]**2+L_ERROR(10,3440,47e-9)))
+##Bestimmung aus Logarithmischem Dekrement
+T=0.00145/4
+T_ERROR=0.0003/4
+logarithmic_dek=np.array([np.log(amps[i]/amps[i+1]) for i in range(4)])
+logarithmic_dek_ERROR=logarithmic_dek*np.array([1/(amps[i]/amps[i+1])*0.05 for i in range(4)])
+damp_const=logarithmic_dek/T
+amps_ERROR=0.05
+damp_const_ERROR=damp_const*np.sqrt((logarithmic_dek_ERROR/logarithmic_dek)**2+2*(amps_ERROR/amps[:-1])**2)
+print("\n\nBestimmung der Dämpfungskonstante aus logarithmischem Dekrement")
+for i in range(4):
+    print("Logarithmisches Dekrement %i: %.3f +- %.3f\nDaraus Dämpfungskonstante %.1f+-%.1f" % (i+1,logarithmic_dek[i], logarithmic_dek_ERROR[i], damp_const[i],damp_const_ERROR[i]))
+print("\n\nDurchschnittliches Dekrement: %.3f +- %.3f\nDurchschnittliche Dämpfungskonstante%.1f +- %.1f"
+      %(np.average(logarithmic_dek),np.sqrt(np.sum(np.square(logarithmic_dek_ERROR)))/2,np.average(damp_const),np.sqrt(np.sum(np.square(damp_const_ERROR)))/2))
