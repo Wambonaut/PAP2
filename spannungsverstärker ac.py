@@ -28,6 +28,6 @@ def Comparisonatresistance274kAC():
     plt.legend(handles=[Regression,Berechnet])
     print('Steigung ' + str(gradient) + '±' + str(stderr) )
     print(274000/3000)
-    plt.show
+    plt.show()
 Comparisonatresistance274kAC()
 

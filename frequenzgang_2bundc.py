@@ -34,5 +34,5 @@ def Frequenzgangbei49kwithdifferentbandwith():
     plt.ylabel("Ausgangsspannung [V]")
     plt.title ("Diagramm 5: Frequenzgänge bei unterschiedlichen Rückkopplungen")
     plt.legend(handles=[Tiefpass,Hochpass,erstesOhm,zweitesOhm,drittesOhm])
-    plt.show
+    plt.show()
 Frequenzgangbei49kwithdifferentbandwith()
