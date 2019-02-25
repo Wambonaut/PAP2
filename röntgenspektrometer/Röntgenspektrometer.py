@@ -14,7 +14,7 @@ from scipy import optimize, stats
 from scipy.constants import c, e
 import os
 
-LiF_DIST=201.4e-12
+LiF_DIST=201.4e-12#Kristallgitterkonstante
 def checkdir():
     for filename in os.listdir("/home/wambo/PAP2/röntgenspektrometer"):
         if filename.endswith(".txt"): 
@@ -24,10 +24,11 @@ def checkdir():
             plt.show()
 
 LiC=np.loadtxt("20_11_2018 15_09_42.txt")
-plt.plot(LiC[:,0],LiC[:,1])
-(slope, intercept), cov=np.polyfit(LiC[10:15,0], LiC[10:15,1], 1, cov=True)
-plt.errorbar(LiC[10:15,0], LiC[10:15,1], np.sqrt(LiC[10:15,1]))
-plt.plot(np.linspace(4,7,25), np.linspace(4,7,25)*slope+intercept)
+#plt.plot(LiC[9:16,0],LiC[9:16,1])
+(slope, intercept), cov=np.polyfit(LiC[10:15,0], LiC[10:15,1]-LiC[0,1], 1, cov=True)
+plt.errorbar(LiC[8:17,0], LiC[8:17,1]-LiC[0,1], np.sqrt(LiC[8:17,1]))
+plt.plot(np.linspace(4.5,6.5,15), np.linspace(4.5,6.5,15)*slope+intercept)
+plt.plot(np.linspace(4.5,6.5,15), np.linspace(4.5,6.5,15)*0)
 plt.title("Gesamtes Spektrum mit gefittetem linearem Abfall")
 plt.ylabel("Intensität")
 plt.xlabel("Winkel")
@@ -57,7 +58,7 @@ def analyze_peak(k, p0, name, order=1):
     print("Peak Höhe:", popt[0]+popt[3], "+-", np.sqrt(pcov[0][0]+pcov[3,3]))
     print("Peak Position: ", popt[2], "+-", np.sqrt(pcov[2][2]))
     y=2*LiF_DIST/order*np.sin(popt[2]/180*np.pi)
-    y_ERROR=2*LiF_DIST/order*np.cos(popt[2]/180*np.pi)*np.sqrt(pcov[2][2])
+    y_ERROR=2*LiF_DIST/order*np.cos(popt[2]/180*np.pi)*np.sqrt(pcov[2][2])/180*np.pi
     print("Zugehörige Wellenlänge", y, "+-",y_ERROR)
     return popt, pcov
 analyze_peak(kb_1, [700, 0.1, 9, 100], "K-Beta erste Ordnung")
@@ -105,9 +106,14 @@ NaCl=np.loadtxt("20_11_2018 16_07_49.txt")
 plt.plot(NaCl[:,0], NaCl[:,1])
 plt.show()
 ##since we dont really have enough data points to justify any fit
-##well just take the local maxima directly from the data and give an error of 0.2 degrees
+##well just take the local maxima directly from the data and give an error of 0.1 degrees
 peaks=sig.argrelmax(NaCl[:,1],order=3)[0][1:]##disregard the first element, it's where the continoous spectrum starts
 peaks_ang=NaCl[peaks, 0]
 print(peaks, peaks_ang)
-peaks_ERROR=0.2
-##Es dauert länger, das ausrechnen voll Gitterkonstante und Avogadrozahl hier zu machen als auf Papier, deswegen lassen wir das
+peaks_ERROR=0.1
+##berechne d
+n_wavel=[63.1e-12, 71.1e-12,2*63.1e-12, 2*71.1e-12] 
+gitter_const=n_wavel/(2*np.sin(peaks_ang/180*np.pi))
+gitter_const_ERROR=n_wavel*np.cos(peaks_ang/180*np.pi)/(np.cos(peaks_ang/180*np.pi*2)-1)*peaks_ERROR/180*np.pi
+print(gitter_const,"+-", gitter_const_ERROR)
+print("Average gitter_const: %.3E +- %.2E"%(np.average(gitter_const), np.sqrt(np.sum(np.square(gitter_const_ERROR)))/2))

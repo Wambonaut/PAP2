@@ -103,7 +103,7 @@ def Frequenzgangbei49kwithdifferentbandwith():
     zweitesOhm,=plt.plot(frequency,voltage_out274,linestyle='-',label='274kΩ')
     plt.errorbar(frequency,voltage_out274,yerr=voltage_out274*0.05,xerr=1,fmt='.')
     voltage_out49=np.array([1.26,1.25,1.24,1.24,1.24,1.23,1.22,1.1,0.8,0.63,0.35,0.25])
-    drittesOhm,=plt.plot(frequency,voltage_out49,linestyle='-',label='490kΩ')
+    drittesOhm,=plt.plot(frequency,voltage_out49,linestyle='-',label='49kΩ')
     plt.errorbar(frequency,voltage_out49,yerr=voltage_out49*0.05,xerr=1,fmt='.')
     Tiefpass,=plt.plot(frequency,voltage_out1,linestyle='-',label='mit 48.7pF und 48.7kΩ')
     plt.errorbar(frequency,voltage_out1,yerr=voltage_out1*0.05,xerr=1,fmt='.',ecolor='blue')
