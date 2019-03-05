@@ -72,6 +72,9 @@ t_ERROR=5
 plt.errorbar(t,V, xerr=t_ERROR, fmt=".")
 (V_per_t,intercept), V_per_t_cov=optimize.curve_fit(lambda x,a,b: a*x+b, t,V, p0=[0.05,0], sigma=[0.05*t_ERROR]*5)
 plt.plot(np.linspace(0,700), np.linspace(0,700)*V_per_t+intercept)
+plt.xlabel("Zeit[s]")
+plt.ylabel("Volumen[ml]")
+plt.title("Bestimmung der Viskosität mit Hagen-Poiseuille")
 filling_avg=(513.5+510.5)/2/10#cm
 filling_avg_ERROR=np.sqrt(2)*0.5/2/10
 R=1.5/2/10
