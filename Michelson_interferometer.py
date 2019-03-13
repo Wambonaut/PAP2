@@ -48,12 +48,12 @@ plt.xlabel("Anzahl der Maxima")
 plt.legend()
 plt.show()
 steigungen=np.array([popt1[0],popt2[0],popt3[0]])
-print("Steigung1=",popt1[0], "+-", pcov1[0][0])
-print("Steigung2=",popt2[0], "+-", pcov2[0][0])
-print("Steigung1=",popt3[0], "+-", pcov3[0][0])
+print("Steigung1=%.2f+-%.2f"%(popt1[0], np.sqrt(pcov1[0][0])))
+print("Steigung2=%.2f+-%.2f"%(popt2[0], np.sqrt(pcov2[0][0])))
+print("Steigung3=%.2f+-%.2f"%(popt3[0], np.sqrt(pcov3[0][0])))
 a_mw=np.average(steigungen)
 a_fehler=1/np.sqrt(3)*np.sqrt((pcov1[0][0])**2+(pcov2[0][0]**2)+(pcov3[0][0])**2)
-print("Steigung_mw=",a_mw, "+-", a_fehler )
+print("Steigung_mw=%.2f+-%.2f"%(a_mw, np.sqrt(a_fehler)))
 lamb=532e-9
 a=0.05
 a_error=5e-5
@@ -64,4 +64,4 @@ T=23.4+273.15
 t_error=0.1
 n_m_1=lamb/2/a/a_mw*p0*T/T0
 n_m_1_error=n_m_1*np.sqrt((a_error/a)**2+(lamb_error/lamb)**2+(t_error/T)**2)
-print("n0-1=", n_m_1,"+-", n_m_1_error)
+print("n0-1=%.5e+-%.2e"%( n_m_1,n_m_1_error))
